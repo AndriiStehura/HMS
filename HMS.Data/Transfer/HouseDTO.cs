@@ -11,5 +11,6 @@ namespace HMS.Data.Transfer
         public IEnumerable<PersonDTO> Persons { get; set; }
         public decimal? MeterPayment { get; set; }
         public IEnumerable<Expense> Expenses { get; set; }
+        public IEnumerable<Payment> Payments { get; set; }
     }
 }

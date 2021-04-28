@@ -116,6 +116,10 @@ namespace HMS.Api.Services
             });
             mappedHouse.Expenses = expenses;
 
+            var payments = _unit.PaymentsRepository.Get();
+            
+            mappedHouse.Payments = payments.Where(payment => mappedHouse.Persons
+                .Any(per => per.PersonId == payment.PersonId));
             return mappedHouse;
         }
     }

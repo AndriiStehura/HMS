@@ -9,6 +9,7 @@ export const apiGet = (uri, dispatch) => {
     return fetch(uri)
         .then(x => x.json())
         .then(data => dispatch(data))
+        .catch(x => alert(x))
 }
 
 export const apiPost = (uri, body) => {

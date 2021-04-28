@@ -44,6 +44,11 @@ namespace HMS.Api.Controllers
         [HttpPost]
         public void Post([FromBody] Expense value)
         {
+            var expenses = _unit.ExpensesRepository.Get();
+            if(expenses.Any()){
+                int maxId = expenses.Count();
+                value.ExpenseId = maxId + 1;
+            }
             _unit.ExpensesRepository.Add(value);
             _unit.Submit();
         }
