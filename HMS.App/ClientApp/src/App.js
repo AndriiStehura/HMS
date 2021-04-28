@@ -8,6 +8,7 @@ import { Settlers } from './components/Settlers/Settlers';
 import {  SettlerDetails } from "./components/Settlers/SettlerDetails";
 import Providers from './components/Providers/Providers';
 import { ProviderDetails } from './components/Providers/ProviderDetails';
+import Expenses from './components/Expenses/Expenses';
 
 export default class App extends Component {
   static displayName = App.name;
@@ -21,6 +22,7 @@ export default class App extends Component {
         <Route path="/settlers/:settlerId" component={SettlerDetails}/>
         <Route path='/providers' component={Providers} />
         <Route path='/provider/:providerId' component={ProviderDetails} />
+        <Route path='/expenses/:houseId' component={Expenses} />
       </Layout>
     );
   }

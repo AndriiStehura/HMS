@@ -2,6 +2,8 @@ import React from "react"
 import { Button, Table } from "reactstrap"
 import * as api from "../../data_access/ApiFunctions"
 import LoadingSpan from "../Common/LoadingSpan";
+import ServiceModal from "./ServiceModal"
+import ConfirmDialog from "../Common/ConfirmDialog"
 
 export class ProviderDetails extends React.Component {
     constructor(props) {
@@ -16,12 +18,14 @@ export class ProviderDetails extends React.Component {
             isLoading: true,
             isModalOpen: false,
             modalHeaderText: "",
-            currentService: this.getEmptyService()
+            currentService: this.getEmptyService(),
+            isConfirmOpen: false,
+            confirmText: ""
         }
     }
 
     componentDidMount() {
-        api.apiGet(`${api.API_PROVIDERS}/${this.state.provider.providerId}`, (data) => this.setState({ provider: data, isLoading: false }))
+        this.updateData()
     }
 
     toggleAddModal(){
@@ -36,11 +40,12 @@ export class ProviderDetails extends React.Component {
             name: "",
             description: "",
             measurement: "",
-            providerId
+            providerId: Number(providerId)
         }
     }
 
     updateData(){
+        api.apiGet(`${api.API_PROVIDERS}/${this.state.provider.providerId}`, (data) => this.setState({ provider: data, isLoading: false }))
 
     }
 
@@ -60,16 +65,50 @@ export class ProviderDetails extends React.Component {
         this.toggleAddModal()
     }
 
-    onAddService(){
-
+    async onAddService(service){
+        this.toggleAddModal()
+        service.price = Number(service.price)
+        await api.apiPost(api.API_SERVICES, service)
+        this.updateData()
     }
 
-    onEditService(){
+    async onEditService(){
+        this.toggleAddModal()
+        const service = this.state.currentService
+        service.price = Number(service.price)
+        await api.apiPut(api.API_SERVICES, service)
+        this.updateData()
+    }
 
+    toggleConfirm(){
+        this.setState({isConfirmOpen: !this.state.isConfirmOpen})
+    }
+
+    onDeleteClick(service){
+        this.setState({
+            currentService: service,
+            confirmText: `Видалити послугу "${service.name}"?`
+        })
+        this.toggleConfirm()
+    }
+
+    async onDeleteService(){
+        this.toggleConfirm()
+        const {currentService} = this.state
+        await api.apiDelete(api.API_SERVICES, currentService.serviceId)
+        this.updateData()
     }
 
     render() {
-        const { provider, isLoading } = this.state
+        const { 
+            provider, 
+            isLoading, 
+            isModalOpen, 
+            modalHeaderText, 
+            currentService,
+            isConfirmOpen,
+            confirmText
+        } = this.state
         return <>
             <div className="d-flex justify-content-between">
                 <h2>Послуги, які надає "{provider.name}"</h2>
@@ -102,8 +141,12 @@ export class ProviderDetails extends React.Component {
                                         <td style={{ textAlign: "center", verticalAlign: "middle" }}>{s.price}</td>
                                         <td style={{ textAlign: "center", verticalAlign: "middle" }}>{s.measurement}</td>
                                         <td style={{ textAlign: "center", verticalAlign: "middle" }}>
-                                            <Button className="btn-primary m-1" onClick={this.onEditClick.bind(this, s)}>Редагувати</Button>
-                                            <Button className="btn-danger m-1">Видалити</Button>
+                                            <Button className="btn-primary m-1" onClick={this.onEditClick.bind(this, s)}>
+                                                Редагувати
+                                            </Button>
+                                            <Button className="btn-danger m-1" onClick={this.onDeleteClick.bind(this, s)}>
+                                                Видалити
+                                            </Button>
                                         </td>
                                     </tr>
                                 )
@@ -111,6 +154,11 @@ export class ProviderDetails extends React.Component {
                         </tbody>
                 }
             </Table>
+            <ServiceModal isModalOpen={isModalOpen} headerText={modalHeaderText} service={currentService}
+                onSubmit={currentService.serviceId ? this.onEditService.bind(this) : this.onAddService.bind(this)}
+                onModalClose={this.toggleAddModal.bind(this)}/>
+            <ConfirmDialog isOpen={isConfirmOpen} onClose={this.toggleConfirm.bind(this)} headerText={confirmText}
+                onSubmit={this.onDeleteService.bind(this)}/>
         </>
     }
 }

@@ -140,13 +140,22 @@ export class Settlers extends Component {
         this.openModal()
     }
 
+    onExpensesClick(){
+        this.props.history.push(`/expenses/${this.state.house.houseId}`)
+    }
+
     render() {
         return <>
             <div className="d-flex justify-content-between">
                 <h1>Мешканці будинку {`"${this.state.house.name}"`}</h1>
+                <div className="d-flex justify-content-between">
+                <Button className="btn-info m-3" onClick={this.onExpensesClick.bind(this)}>
+                    Витрати будинку
+                </Button>
                 <Button className="btn-success my-3" onClick={this.onAddSettlerClick.bind(this)}>
                     Додати мешканця
                 </Button>
+                </div>
             </div>
             <Table bordered hover size="sm">
                 <thead>

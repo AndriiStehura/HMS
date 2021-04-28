@@ -1,7 +1,9 @@
 export const API_HOUSES = "api/houses", 
              API_PERSONS = "api/persons",
              API_PAYMENTS = "api/payments",
-             API_PROVIDERS = "api/providers"
+             API_PROVIDERS = "api/providers",
+             API_SERVICES = "api/services",
+             API_EXPENSES = "api/expenses"
 
 export const apiGet = (uri, dispatch) => {
     return fetch(uri)

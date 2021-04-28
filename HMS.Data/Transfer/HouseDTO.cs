@@ -10,5 +10,6 @@ namespace HMS.Data.Transfer
         public Address Address { get; set; }
         public IEnumerable<PersonDTO> Persons { get; set; }
         public decimal? MeterPayment { get; set; }
+        public IEnumerable<Expense> Expenses { get; set; }
     }
 }

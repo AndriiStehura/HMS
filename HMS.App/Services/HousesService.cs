@@ -42,11 +42,10 @@ namespace HMS.Api.Services
         {
             var houses = _unit.HousesRepository.Get(includeProperties: "Address")
                 .ToList();
-            for(int i = 0; i < houses.Count(); ++i)
+            houses.ForEach(house => 
             {
-                houses[i].Persons = _unit.PersonsRepository.Get(filter: x => x.HouseId == houses[i].HouseId)
-                    .ToList();
-            }
+                house.Persons = _unit.PersonsRepository.Get(filter: x => x.HouseId == house.HouseId).ToList();
+            });
             return houses;
         }
         public IEnumerable<HouseDTO> GetDTO()
@@ -54,12 +53,12 @@ namespace HMS.Api.Services
             var houses = _unit.HousesRepository.Get(includeProperties: "Address")
                 .Select(x => _mapper.Map<HouseDTO>(x))
                 .ToList();
-            for(int i = 0; i < houses.Count(); ++i)
+            houses.ForEach(x => 
             {
-                houses[i].Persons = _unit.PersonsRepository.Get(filter: x => x.HouseId == houses[i].HouseId)
-                    .Select(x => _mapper.Map<PersonDTO>(x))
+                x.Persons = _unit.PersonsRepository.Get(filter: y => y.HouseId == x.HouseId)
+                    .Select(y => _mapper.Map<PersonDTO>(y))
                     .ToList();
-            }
+            });
             return houses;
         }
 
@@ -106,8 +105,17 @@ namespace HMS.Api.Services
                     .FirstOrDefault();
                 x.Contacts = _mapper.Map<ContactsDTO>(contact);
             });
-
             mappedHouse.Persons = persons;
+            
+            var expenses = _unit.ExpensesRepository.Get(filter: y => y.HouseId == mappedHouse.HouseId)
+                    .ToList();
+            expenses.ForEach(e => 
+            {
+                e.Service = _unit.ServicesRepository.Get(filter: s => s.ServiceId == e.ServiceId)
+                    .FirstOrDefault();
+            });
+            mappedHouse.Expenses = expenses;
+
             return mappedHouse;
         }
     }

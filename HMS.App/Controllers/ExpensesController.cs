@@ -22,13 +22,23 @@ namespace HMS.Api.Controllers
         [HttpGet]
         public IEnumerable<Expense> Get()
         {
-            return _unit.ExpensesRepository.Get();
+            var services = _unit.ServicesRepository.Get();
+            var expenses = _unit.ExpensesRepository.Get().ToList();
+            expenses.ForEach(e => 
+            {
+                e.Service = services.FirstOrDefault();
+            });
+
+            return expenses;
         }
 
         [HttpGet("{id}")]
         public Expense Get(int id)
         {
-            return _unit.ExpensesRepository.Get(id);
+            var expense = _unit.ExpensesRepository.Get(id);
+            expense.Service = _unit.ServicesRepository.Get(filter: x => x.ServiceId == expense.ServiceId)
+                .FirstOrDefault();
+            return expense;
         }
 
         [HttpPost]
