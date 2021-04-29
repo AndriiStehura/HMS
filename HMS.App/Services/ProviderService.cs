@@ -76,7 +76,21 @@ namespace HMS.Api.Services
 
         public void Delete(int id)
         {
+            var provider = _unit.ProvidersRepository.Get(id);
+            if(provider.ContactId.HasValue){
+                _unit.ContactsRepository.Delete(provider.ContactId.Value);
+            }
+
+            _unit.ServicesRepository.Get(x => x.ProviderId == id).ToList()
+                .ForEach(x => {
+                    _unit.ExpensesRepository.Get(filter: y => y.ServiceId == x.ServiceId)
+                        .ToList().ForEach(y => _unit.ExpensesRepository.Delete(y.ExpenseId));
+                    _unit.ServicesRepository.Delete(x.ServiceId);
+                });
+
             _unit.ProvidersRepository.Delete(id);
+            _unit.AddressesRepository.Get(filter: x => x.AddressId == provider.AddressId)
+                .ToList().ForEach(x => _unit.AddressesRepository.Delete(x.AddressId));
             _unit.Submit();
         }
 

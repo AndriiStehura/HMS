@@ -14,11 +14,13 @@ namespace HMS.Api.Services
     {
         private readonly IHmsUnitOfWork _unit;
         private readonly IMapper _mapper;
+        private readonly IPersonService _personService;
 
-        public HousesService(IHmsUnitOfWork unit, IMapper mapper)
+        public HousesService(IHmsUnitOfWork unit, IMapper mapper, IPersonService personService)
         {
             _unit = unit;
             _mapper = mapper;
+            _personService = personService;
         }
 
         public void Add(House entity)
@@ -34,7 +36,19 @@ namespace HMS.Api.Services
 
         public void Delete(int id)
         {
+            var house = _unit.HousesRepository.Get(id);
+
+            _unit.ExpensesRepository.Get(filter: x => x.HouseId == id)
+                .ToList().ForEach(x => _unit.ExpensesRepository.Delete(x.ExpenseId));
+            
+            _personService.Get(filter: x => x.HouseId == id)
+                .ToList().ForEach(x => _personService.Delete(x.PersonId));
+
             _unit.HousesRepository.Delete(id);
+
+            _unit.AddressesRepository.Get(filter: x => x.AddressId == house.AddressId)
+                .ToList().ForEach(x => _unit.AddressesRepository.Delete(x.AddressId));
+                
             _unit.Submit();
         }
 

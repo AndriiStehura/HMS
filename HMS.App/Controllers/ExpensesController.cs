@@ -46,7 +46,7 @@ namespace HMS.Api.Controllers
         {
             var expenses = _unit.ExpensesRepository.Get();
             if(expenses.Any()){
-                int maxId = expenses.Count();
+                int maxId = expenses.Max(x => x.ExpenseId);
                 value.ExpenseId = maxId + 1;
             }
             _unit.ExpensesRepository.Add(value);

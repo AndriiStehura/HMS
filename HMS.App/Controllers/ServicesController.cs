@@ -55,6 +55,8 @@ namespace HMS.Api.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+            _unit.ExpensesRepository.Get(filter: x => x.ServiceId == id).ToList()
+                .ForEach(x => _unit.ExpensesRepository.Delete(x.ExpenseId));
             _unit.ServicesRepository.Delete(id);
             _unit.Submit();
         }

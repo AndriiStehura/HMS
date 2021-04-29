@@ -58,6 +58,9 @@ namespace HMS.Api.Services
 
         public void Delete(int id)
         {
+            _unit.PaymentsRepository.Get(filter: x => x.PersonId == id)
+                .ToList().ForEach(x => _unit.PaymentsRepository.Delete(x.PaymentId));
+
             var settler = _unit.SettlersRepository.Get(x => x.PersonId == id).FirstOrDefault();
             if(settler != null && settler.ContactId.HasValue)
             {
