@@ -33,7 +33,7 @@ namespace HMS.Data.Context
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=HouseManagementDB;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Server=tcp:recruitment-chatbot-sql-server-dev.database.windows.net,1433;Initial Catalog=ChatbotDbDev;Persist Security Info=False;User ID=chatbot-admin;Password=SQLw1q2r3e4;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
             }
         }
 
