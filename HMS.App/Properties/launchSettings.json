@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "https://hms2022.azurewebsites.net",
+      "applicationUrl": "http://localhost:51025",
       "sslPort": 0
     }
   },
