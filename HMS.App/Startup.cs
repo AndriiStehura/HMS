@@ -54,7 +54,8 @@ namespace HMS.App
             {
                 app.UseExceptionHandler("/Error");
             }
-
+            
+            app.UseHttpsRedirection();
             app.UseCors(policy =>
             {
                 policy.AllowAnyHeader();
@@ -70,7 +71,6 @@ namespace HMS.App
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
             });
-            app.UseHttpsRedirection();
             //app.UseSpa(spa =>
             //{
             //    spa.Options.SourcePath = "ClientApp";
